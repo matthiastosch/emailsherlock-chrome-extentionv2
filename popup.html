@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Emailsherlock Chrome extention</title>
+
+    <style>
+
+        html, body {
+            width: 400px !important;
+            margin: 0;
+            padding: 0;
+        }
+
+        .header {
+            background-color: #1b284f;
+        }
+
+        .header .logo {
+            width: 200px;
+            padding: 10px;
+        }
+
+        .content {
+            padding: 15px;
+            margin-top: 15px;
+        }
+
+        .content ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        #emailList li {
+            padding: 5px 0;
+        }
+        #emailList li span{
+            display: none;
+        }
+
+        #emailList li:hover {
+            background-color: #f5f5f5;
+            color: #0d6efd;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        #emailList li:hover span{
+            display: inline-block;
+        }
+
+        #processIssue {
+            border: 1px solid red;
+            border-radius: 5px;
+            padding: 10px;
+            margin: 20px 0;
+        }
+
+        input#email {
+            padding: 10px 15px;
+            font-size: 15px;
+            border-radius: 5px !important;
+            border: 1px solid #868686;
+            width: 60%;
+            margin-right: 10px;
+        }
+
+        input#search {
+            padding: 5px 15px;
+            font-size: 15px;
+            width: 40%;
+            color: white !important;
+            border: 1px solid #1b284f;
+            border-radius: 5px !important;
+            outline: none !important;
+            background-color: #1b284f;
+        }
+
+
+        .separator {
+            display: flex;
+            align-items: center;
+            text-align: center;
+            font-weight: bold;
+            margin-top: 10px;
+            margin-bottom: 20px;
+        }
+
+        .separator::before,
+        .separator::after {
+            content: '';
+            flex: 1;
+            border-bottom: 1px solid #868686;
+        }
+
+        .separator:not(:empty)::before {
+            margin-right: .25em;
+        }
+
+        .separator:not(:empty)::after {
+            margin-left: .25em;
+        }
+
+        #footer {
+            font-size: 0.9em;
+            padding: 7px 15px;
+            background-color: #dadada;
+        }
+        #footer #version{
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+
+
+<div class="header">
+    <img src="images/logo-white.png" alt="Emailsherlock logo" class="logo">
+</div>
+
+<div class="content">
+
+    <div id="emailListWrapper" style="display: none">
+        <b>Emails found:</b>
+
+        <ul id="emailList"></ul>
+    </div>
+    <ul id="emailListNoResults" style="display: none">
+        <li>No emails found on this page</li>
+    </ul>
+
+
+    <div id="manualSearch">
+
+        <div class="separator">OR</div>
+
+        Start a new search for another email?
+        <div style="display: flex; justify-content: space-between; margin-top: 10px;">
+            <input type="text" id="email" placeholder="Enter email to search">
+            <input type="button" id="search" value="Lookup">
+        </div>
+    </div>
+
+    <div id="processIssue" style="display: none">
+        We couldn't parse the content of the current Tab because of an unexpected error. Please reload the page and try
+        again.
+    </div>
+
+</div>
+<div id="footer">
+    version: <span id="version"></span>
+</div>
+
+<script src="popup.js"></script>
+
+</body>
+</html>
