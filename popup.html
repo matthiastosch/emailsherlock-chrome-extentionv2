@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Emailsherlock Chrome extention</title>
+    <title>Emailsherlock Chrome Extension</title>
 
     <style>
 
@@ -10,42 +10,86 @@
             width: 400px !important;
             margin: 0;
             padding: 0;
+            color: #000;
         }
 
         .header {
-            background-color: #1b284f;
+            border-bottom: 1px solid #EBECEF;
+            position: relative;
         }
 
         .header .logo {
             width: 200px;
-            padding: 10px;
+            padding: 15px;
+        }
+
+        .header #close-icon {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            cursor: pointer;
         }
 
         .content {
             padding: 15px;
-            margin-top: 15px;
         }
 
-        .content ul {
-            list-style: none;
-            padding: 0;
+        #emailListWrapper {
+            margin-top: 15px;
+            margin-bottom: 15px;
         }
 
         #emailList li {
             padding: 5px 0;
         }
-        #emailList li span{
+
+        #emailList .flex-container .flex-item-right a {
             display: none;
         }
 
-        #emailList li:hover {
-            background-color: #f5f5f5;
-            color: #0d6efd;
+        #emailList .flex-container {
+            color: #000;
+            text-decoration: none;
+        }
+
+        #emailList .flex-container:hover {
+            background-color: #F4F6FA;
             font-weight: bold;
             cursor: pointer;
         }
-        #emailList li:hover span{
+
+        #emailList a.flex-container:hover {
+            color: #0d6efd;
+        }
+
+        .new-color {
+            color: #929BB5;
+        }
+
+        .increase-notification {
+            background-color: #F4F6FA;
+            border-radius: 28px;
+            border: 1px solid #EBECEF;
+            color: #000;
+            padding: 1px 10px;
+            text-decoration: none;
+            text-align: center;
+        }
+
+        .score-badge {
             display: inline-block;
+            width: .45rem;
+            height: .45rem;
+            border-radius: 999px;
+            margin: 2px 5px 2px 0;
+        }
+
+        #too-many-emails {
+            border: 1px solid #EBECEF;
+            border-radius: 8px;
+            padding: 10px;
+            margin: 5px 15px;
+            display: none;
         }
 
         #processIssue {
@@ -55,58 +99,116 @@
             margin: 20px 0;
         }
 
-        input#email {
-            padding: 10px 15px;
-            font-size: 15px;
-            border-radius: 5px !important;
-            border: 1px solid #868686;
-            width: 60%;
-            margin-right: 10px;
+        * {
+            box-sizing: border-box;
         }
 
-        input#search {
+        #loader {
+            width: 15%;
+            text-align: center;
+            margin: 30px auto;
+        }
+
+        .flex-container {
+            padding: 0 15px;
+            display: flex;
+            flex-wrap: wrap;
+            text-align: left;
+        }
+
+        .flex-item-left {
+            padding: 7px 0;
+            flex: 65%;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .flex-item-middle {
+            padding: 7px 0;
+            flex: 15%;
+        }
+
+        .flex-item-right {
+            padding: 7px 0;
+            flex: 10%;
+            text-align: right;
+        }
+
+        .form-wrapper {
+            position: relative;
+            margin-top: 10px;
+        }
+
+        input#email {
+            padding: 13px 15px;
+            font-size: 15px;
+            border-radius: 8px !important;
+            border: 1px solid #EBECEF;
+            width: 100%;
+            margin-right: 10px;
+            outline: none !important;
+        }
+
+        input#email::placeholder {
+            color: #929BB5;
+        }
+
+        button#search {
             padding: 5px 15px;
             font-size: 15px;
-            width: 40%;
+            width: 50px;
             color: white !important;
-            border: 1px solid #1b284f;
-            border-radius: 5px !important;
+            border: 1px solid #3754F1;
+            border-radius: 8px !important;
             outline: none !important;
-            background-color: #1b284f;
+            background-color: #3754F1;
+            position: absolute;
+            right: 3px;
+            top: 0px;
+            bottom: 0px;
         }
-
 
         .separator {
             display: flex;
             align-items: center;
             text-align: center;
             font-weight: bold;
-            margin-top: 10px;
-            margin-bottom: 20px;
         }
 
         .separator::before,
         .separator::after {
             content: '';
             flex: 1;
-            border-bottom: 1px solid #868686;
+            border-bottom: 1px solid #EBECEF;
         }
 
-        .separator:not(:empty)::before {
-            margin-right: .25em;
-        }
-
-        .separator:not(:empty)::after {
-            margin-left: .25em;
+        #emailListNoResults {
+            border: 1px solid #EBECEF;
+            border-radius: 8px;
+            padding: 10px 20px;
         }
 
         #footer {
             font-size: 0.9em;
             padding: 7px 15px;
-            background-color: #dadada;
+            background-color: #F4F6FA;
         }
-        #footer #version{
+
+        #footer #version {
             font-weight: bold;
+        }
+
+        .bg-red {
+            background-color: #D72638;
+        }
+
+        .bg-green {
+            background-color: #71C962;
+        }
+
+        .bg-yellow {
+            background-color: #F4B954;
         }
     </style>
 </head>
@@ -114,35 +216,156 @@
 
 
 <div class="header">
-    <img src="images/logo-white.png" alt="Emailsherlock logo" class="logo">
+    <img src="images/logo-blue-logo.png" alt="Emailsherlock logo" class="logo">
+
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" id="close-icon">
+        <rect x="0.5" y="0.5" width="23" height="23" rx="3.5" fill="white" stroke="#EBECEF"/>
+        <line x1="7.35355" y1="7.35354" x2="16.5459" y2="16.5459" stroke="black"/>
+        <line x1="16.5459" y1="7.35355" x2="7.35355" y2="16.5459" stroke="black"/>
+    </svg>
+
+
 </div>
+
+
+<div id="loader">
+    <svg id="L5" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+         viewBox="0 0 100 100" enable-background="new 0 0 0 0" xml:space="preserve">
+          <circle fill="#1b284f" stroke="none" cx="6" cy="50" r="6">
+            <animateTransform
+                    attributeName="transform"
+                    dur="1s"
+                    type="translate"
+                    values="0 15 ; 0 -15; 0 15"
+                    repeatCount="indefinite"
+                    begin="0.1"/>
+          </circle>
+        <circle fill="#1b284f" stroke="none" cx="30" cy="50" r="6">
+            <animateTransform
+                    attributeName="transform"
+                    dur="1s"
+                    type="translate"
+                    values="0 10 ; 0 -10; 0 10"
+                    repeatCount="indefinite"
+                    begin="0.2"/>
+          </circle>
+        <circle fill="#1b284f" stroke="none" cx="54" cy="50" r="6">
+            <animateTransform
+                    attributeName="transform"
+                    dur="1s"
+                    type="translate"
+                    values="0 5 ; 0 -5; 0 5"
+                    repeatCount="indefinite"
+                    begin="0.3"/>
+          </circle>
+        </svg>
+</div>
+
+
+<div id="emailListWrapper" style="display: none">
+
+    <div class="flex-container">
+        <div class="flex-item-left"><b>Emails found</b></div>
+        <div class="flex-item-middle"><b>Score</b></div>
+        <div class="flex-item-right"><b>Profiles</b></div>
+    </div>
+
+    <div id="emailList"></div>
+
+    <div id="too-many-emails">
+        <b>We found <span id="actual-found"></span> Emails</b> on this page. In the free version, we can only check the
+        first 10 emails at once.
+    </div>
+</div>
+
+
+<div class="content" id="emailListNoResultsWrapper" style="display: none">
+    <div id="emailListNoResults">
+
+        <svg width="60" height="61" viewBox="0 0 60 61" fill="none" xmlns="http://www.w3.org/2000/svg"
+             style="vertical-align: middle;margin-right: 5px">
+            <path d="M4.95959 31.3176C4.95959 37.6828 7.48816 43.7873 11.989 48.2881C16.4899 52.789 22.5944 55.3176 28.9596 55.3176C35.3248 55.3176 41.4293 52.789 45.9302 48.2881C50.431 43.7873 52.9596 37.6828 52.9596 31.3176C52.9596 24.9524 50.431 18.8479 45.9302 14.347C41.4293 9.84613 35.3248 7.31757 28.9596 7.31757C22.5944 7.31757 16.4899 9.84613 11.989 14.347C7.48816 18.8479 4.95959 24.9524 4.95959 31.3176Z"
+                  fill="#F4F6FA"/>
+            <path d="M13.3302 41.2146C13.3302 41.9163 14.5973 42.5894 16.8528 43.0856C19.1083 43.5818 22.1674 43.8606 25.3572 43.8606C28.547 43.8606 31.6061 43.5818 33.8616 43.0856C36.1171 42.5894 37.3842 41.9163 37.3842 41.2146C37.3842 40.5128 36.1171 39.8398 33.8616 39.3436C31.6061 38.8474 28.547 38.5686 25.3572 38.5686C22.1674 38.5686 19.1083 38.8474 16.8528 39.3436C14.5973 39.8398 13.3302 40.5128 13.3302 41.2146Z"
+                  fill="#EDEFFD"/>
+            <path d="M38.9262 15.3036H13.0416C12.7405 15.3036 12.4518 15.4232 12.2389 15.6361C12.026 15.8489 11.9064 16.1377 11.9064 16.4388V32.3028H40.0608V16.4394C40.0609 16.2903 40.0316 16.1426 39.9746 16.0049C39.9176 15.8671 39.8341 15.7419 39.7287 15.6365C39.6233 15.531 39.4982 15.4473 39.3605 15.3902C39.2228 15.3331 39.0752 15.3036 38.9262 15.3036Z"
+                  fill="#EDEFFD"/>
+            <path d="M38.9262 15.3036H13.0416C12.7405 15.3036 12.4518 15.4232 12.2389 15.6361C12.026 15.8489 11.9064 16.1377 11.9064 16.4388V32.3028H40.0608V16.4394C40.0608 16.2903 40.0316 16.1426 39.9746 16.0049C39.9176 15.8671 39.8341 15.7419 39.7287 15.6365C39.6233 15.531 39.4982 15.4473 39.3605 15.3902C39.2228 15.3331 39.0752 15.3036 38.9262 15.3036Z"
+                  stroke="#3754F1" stroke-width="0.6" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M43.044 25.191C43.0864 24.9788 43.0813 24.7598 43.0288 24.5498C42.9764 24.3399 42.878 24.1442 42.7407 23.9769C42.6035 23.8095 42.4308 23.6748 42.2352 23.5823C42.0395 23.4898 41.8258 23.4419 41.6094 23.442H22.4304C22.0925 23.442 21.765 23.325 21.5037 23.1108C21.2424 22.8966 21.0633 22.5985 20.997 22.2672L20.5896 20.2314C20.5236 19.9001 20.3447 19.602 20.0834 19.388C19.8221 19.1739 19.4946 19.0572 19.1568 19.0578H9.714C9.49761 19.0576 9.28389 19.1055 9.08826 19.198C8.89264 19.2905 8.72 19.4253 8.5828 19.5927C8.4456 19.76 8.34727 19.9557 8.29491 20.1657C8.24254 20.3756 8.23745 20.5946 8.28 20.8068L12.0798 39.807C12.1458 40.1388 12.3248 40.4375 12.5865 40.6521C12.8481 40.8667 13.176 40.9838 13.5144 40.9836H38.6874C39.0251 40.9836 39.3524 40.8667 39.6137 40.6527C39.875 40.4388 40.0541 40.141 40.1208 39.81L43.044 25.191Z"
+                  fill="white"/>
+            <path d="M43.044 25.191C43.0864 24.9788 43.0813 24.7598 43.0288 24.5498C42.9764 24.3399 42.878 24.1442 42.7407 23.9769C42.6035 23.8095 42.4308 23.6748 42.2352 23.5823C42.0395 23.4898 41.8258 23.4419 41.6094 23.442H22.4304C22.0925 23.442 21.765 23.325 21.5037 23.1108C21.2424 22.8966 21.0633 22.5985 20.997 22.2672L20.5896 20.2314C20.5236 19.9001 20.3447 19.602 20.0834 19.388C19.8221 19.1739 19.4946 19.0572 19.1568 19.0578H9.714C9.49761 19.0576 9.28389 19.1055 9.08826 19.198C8.89264 19.2905 8.72 19.4253 8.5828 19.5927C8.4456 19.76 8.34727 19.9557 8.29491 20.1657C8.24254 20.3756 8.23745 20.5946 8.28 20.8068L12.0798 39.807C12.1458 40.1388 12.3248 40.4375 12.5865 40.6521C12.8481 40.8667 13.176 40.9838 13.5144 40.9836H38.6874C39.0251 40.9836 39.3524 40.8667 39.6137 40.6527C39.875 40.4388 40.0541 40.141 40.1208 39.81L43.044 25.191Z"
+                  stroke="#3754F1" stroke-width="0.6" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M46.2865 17.865C46.1736 17.838 46.0731 17.7738 46.0012 17.6828C45.9294 17.5917 45.8903 17.4791 45.8903 17.3631C45.8903 17.247 45.9294 17.1344 46.0012 17.0433C46.0731 16.9523 46.1736 16.8881 46.2865 16.8612L51.1735 15.6864C51.2492 15.6682 51.3282 15.6674 51.4043 15.684C51.4804 15.7006 51.5518 15.7343 51.6131 15.7824C51.6744 15.8305 51.724 15.8919 51.7582 15.9619C51.7924 16.032 51.8104 16.1088 51.8107 16.1868L51.8179 18.5364C51.8181 18.6145 51.8006 18.6917 51.7667 18.7621C51.7327 18.8325 51.6832 18.8943 51.6219 18.9428C51.5606 18.9913 51.4891 19.0252 51.4128 19.042C51.3364 19.0588 51.2573 19.058 51.1813 19.0398L46.2865 17.865Z"
+                  fill="white" stroke="#3754F1" stroke-width="0.6" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M42.3 13.7346C42.201 13.7942 42.0849 13.819 41.9702 13.8049C41.8555 13.7907 41.7488 13.7386 41.6673 13.6567C41.5857 13.5748 41.534 13.4679 41.5203 13.3531C41.5067 13.2383 41.5319 13.1223 41.592 13.0236L45.2796 7.00257C45.3203 6.9361 45.3755 6.87971 45.441 6.83762C45.5066 6.79553 45.5809 6.76884 45.6582 6.75954C45.7356 6.75025 45.814 6.75859 45.8877 6.78395C45.9614 6.80931 46.0284 6.85103 46.0836 6.90597L48.4236 9.23217C48.479 9.28731 48.5212 9.35431 48.5469 9.42811C48.5727 9.50192 48.5813 9.5806 48.5723 9.65824C48.5632 9.73588 48.5366 9.81044 48.4946 9.87632C48.4525 9.9422 48.396 9.99768 48.3294 10.0386L42.3 13.7346Z"
+                  fill="white" stroke="#3754F1" stroke-width="0.6" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M33.4296 8.04775C33.4024 8.16046 33.3381 8.26076 33.247 8.33249C33.1559 8.40422 33.0434 8.44323 32.9274 8.44323C32.8115 8.44323 32.6989 8.40422 32.6078 8.33249C32.5167 8.26076 32.4524 8.16046 32.4252 8.04775L31.251 3.16075C31.2327 3.08496 31.2318 3.006 31.2484 2.92981C31.265 2.85362 31.2986 2.78218 31.3468 2.72085C31.3949 2.65953 31.4563 2.60992 31.5264 2.57574C31.5965 2.54157 31.6734 2.52373 31.7514 2.52355L34.1004 2.51575C34.1786 2.5155 34.2559 2.53302 34.3264 2.56699C34.3969 2.60096 34.4587 2.6505 34.5073 2.71187C34.5558 2.77323 34.5898 2.84482 34.6066 2.92123C34.6234 2.99764 34.6227 3.07687 34.6044 3.15295L33.4296 8.04775Z"
+                  fill="white" stroke="#3754F1" stroke-width="0.6" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M29.2986 12.0318C29.3593 12.1306 29.385 12.247 29.3714 12.3623C29.3579 12.4775 29.3059 12.5848 29.2238 12.6668C29.1418 12.7489 29.0345 12.8009 28.9193 12.8144C28.8041 12.828 28.6876 12.8023 28.5888 12.7416L22.5684 9.05456C22.5019 9.01383 22.4455 8.95859 22.4034 8.89296C22.3613 8.82734 22.3346 8.75305 22.3253 8.67564C22.316 8.59824 22.3244 8.51973 22.3498 8.44601C22.3751 8.37229 22.4168 8.30527 22.4718 8.24996L24.7974 5.90996C24.8525 5.85456 24.9195 5.8124 24.9933 5.78665C25.0671 5.7609 25.1458 5.75223 25.2234 5.7613C25.3011 5.77037 25.3756 5.79694 25.4415 5.83901C25.5074 5.88107 25.5629 5.93754 25.6038 6.00416L29.2986 12.0318Z"
+                  fill="white" stroke="#3754F1" stroke-width="0.6" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M40.9956 45.9864L43.173 43.809L46.983 47.6196L44.8056 49.797L40.9956 45.9864Z" fill="white"
+                  stroke="#3754F1" stroke-width="0.6" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M54.3834 57.0953L54.279 57.1992C53.8585 57.6165 53.2901 57.8507 52.6977 57.8507C52.1052 57.8507 51.5368 57.6165 51.1164 57.1992L44.2422 50.3244C44.1029 50.1844 44.0248 49.995 44.0248 49.7976C44.0248 49.6001 44.1029 49.4107 44.2422 49.2707L46.4544 47.058C46.5946 46.919 46.784 46.841 46.9815 46.841C47.1789 46.841 47.3683 46.919 47.5086 47.058L54.3834 53.9328C54.5916 54.1401 54.7569 54.3865 54.8696 54.6579C54.9824 54.9292 55.0404 55.2202 55.0404 55.5141C55.0404 55.8079 54.9824 56.0989 54.8696 56.3702C54.7569 56.6416 54.5916 56.888 54.3834 57.0953Z"
+                  fill="#EDEFFD"/>
+            <path d="M54.3834 57.0953L54.279 57.1992C53.8585 57.6165 53.2901 57.8507 52.6977 57.8507C52.1052 57.8507 51.5368 57.6165 51.1164 57.1992L44.2422 50.3244C44.1029 50.1844 44.0248 49.995 44.0248 49.7976C44.0248 49.6001 44.1029 49.4107 44.2422 49.2707L46.4544 47.058C46.5946 46.919 46.784 46.841 46.9815 46.841C47.1789 46.841 47.3683 46.919 47.5086 47.058L54.3834 53.9328C54.5916 54.1401 54.7569 54.3865 54.8696 54.6579C54.9824 54.9292 55.0404 55.2202 55.0404 55.5141C55.0404 55.8079 54.9824 56.0989 54.8696 56.3702C54.7569 56.6416 54.5916 56.888 54.3834 57.0953Z"
+                  stroke="#3754F1" stroke-width="0.6" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M24.6144 43.8486C26.2129 46.4607 28.7835 48.3308 31.7609 49.0476C34.7382 49.7644 37.8783 49.269 40.4904 47.6706C43.1025 46.0721 44.9727 43.5015 45.6894 40.5241C46.4062 37.5468 45.9109 34.4067 44.3124 31.7946C42.714 29.1825 40.1433 27.3123 37.166 26.5955C34.1887 25.8788 31.0485 26.3741 28.4364 27.9726C25.8243 29.571 23.9542 32.1417 23.2374 35.119C22.5206 38.0963 23.016 41.2365 24.6144 43.8486Z"
+                  fill="white" stroke="#3754F1" stroke-width="0.6" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M40.995 31.2906C42.2878 32.5826 43.1684 34.229 43.5254 36.0215C43.8824 37.8141 43.6998 39.6722 43.0006 41.3609C42.3014 43.0497 41.1171 44.4931 39.5975 45.5087C38.0778 46.5242 36.2911 47.0663 34.4634 47.0663C32.6356 47.0663 30.849 46.5242 29.3293 45.5087C27.8097 44.4931 26.6254 43.0497 25.9262 41.3609C25.227 39.6722 25.0444 37.8141 25.4014 36.0215C25.7584 34.229 26.639 32.5826 27.9318 31.2906C29.6645 29.559 32.0138 28.5863 34.4634 28.5863C36.913 28.5863 39.2623 29.559 40.995 31.2906Z"
+                  fill="#EDEFFD"/>
+            <path d="M40.995 31.2906C42.2878 32.5826 43.1684 34.229 43.5254 36.0215C43.8824 37.8141 43.6998 39.6722 43.0006 41.3609C42.3014 43.0497 41.1171 44.4931 39.5975 45.5087C38.0778 46.5242 36.2911 47.0663 34.4634 47.0663C32.6356 47.0663 30.849 46.5242 29.3293 45.5087C27.8097 44.4931 26.6254 43.0497 25.9262 41.3609C25.227 39.6722 25.0444 37.8141 25.4014 36.0215C25.7584 34.229 26.639 32.5826 27.9318 31.2906C29.6645 29.559 32.0138 28.5863 34.4634 28.5863C36.913 28.5863 39.2623 29.559 40.995 31.2906Z"
+                  stroke="#3754F1" stroke-width="0.6" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M29.9916 41.2188C30.4834 40.3673 31.1924 39.6617 32.0462 39.1739C32.8999 38.6862 33.8679 38.4339 34.8511 38.4427C35.8344 38.4516 36.7977 38.7213 37.6425 39.2243C38.4874 39.7273 39.1836 40.4456 39.66 41.3058"
+                  stroke="#3754F1" stroke-width="0.6" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M31.1178 33.6725L33.2556 35.8103" stroke="#3754F1" stroke-width="0.6" stroke-linecap="round"
+                  stroke-linejoin="round"/>
+            <path d="M31.1178 35.8103L33.2556 33.6725" stroke="#3754F1" stroke-width="0.6" stroke-linecap="round"
+                  stroke-linejoin="round"/>
+            <path d="M35.9117 33.6725L38.0495 35.8103" stroke="#3754F1" stroke-width="0.6" stroke-linecap="round"
+                  stroke-linejoin="round"/>
+            <path d="M35.9117 35.8103L38.0495 33.6725" stroke="#3754F1" stroke-width="0.6" stroke-linecap="round"
+                  stroke-linejoin="round"/>
+        </svg>
+
+        <b>No emails found on this page</b>
+    </div>
+</div>
+
+
+<div class="separator"></div>
 
 <div class="content">
 
-    <div id="emailListWrapper" style="display: none">
-        <b>Emails found:</b>
-
-        <ul id="emailList"></ul>
-    </div>
-    <ul id="emailListNoResults" style="display: none">
-        <li>No emails found on this page</li>
-    </ul>
-
-
     <div id="manualSearch">
 
-        <div class="separator">OR</div>
+        <b>Start a new search for another email?</b>
+        <form action="https://emailsherlock/email-reverse-search" method="post" target="_blank"
+              name="sherlock_lookup_form">
+            <div class="form-wrapper">
+                <input type="text" id="email" name="email" placeholder="Enter an email to search">
+                <button type="submit" id="search" value="Lookup">
+                    <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <g clip-path="url(#clip0_2_210)">
+                            <path d="M1.22673 11.1308C2.01022 12.9743 3.49394 14.431 5.35149 15.1806C7.20904 15.9301 9.28825 15.911 11.1317 15.1275C12.9752 14.344 14.4319 12.8603 15.1815 11.0027C15.931 9.1452 15.9119 7.06599 15.1284 5.22251C14.7404 4.30971 14.1765 3.48227 13.4688 2.78741C12.7611 2.09256 11.9234 1.54391 11.0036 1.17278C10.0839 0.801659 9.10001 0.615329 8.10824 0.624433C7.11646 0.633537 6.13619 0.837896 5.2234 1.22584C4.3106 1.61379 3.48315 2.17773 2.7883 2.88545C2.09345 3.59318 1.54479 4.43084 1.17367 5.35061C0.802544 6.27037 0.616214 7.25423 0.625318 8.246C0.634422 9.23778 0.838782 10.218 1.22673 11.1308Z"
+                                  stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                            <path d="M13.5176 13.5167L19.3751 19.375" stroke="white" stroke-width="1.5"
+                                  stroke-linecap="round" stroke-linejoin="round"/>
+                        </g>
+                        <defs>
+                            <clipPath id="clip0_2_210">
+                                <rect width="20" height="20" fill="white"/>
+                            </clipPath>
+                        </defs>
+                    </svg>
 
-        Start a new search for another email?
-        <div style="display: flex; justify-content: space-between; margin-top: 10px;">
-            <input type="text" id="email" placeholder="Enter email to search">
-            <input type="button" id="search" value="Lookup">
-        </div>
+                </button>
+            </div>
+        </form>
     </div>
 
     <div id="processIssue" style="display: none">
-        We couldn't parse the content of the current Tab because of an unexpected error. Please reload the page and try
-        again.
+        <b>The Extension was updated</b>, we couldn't parse the content of the current Tab. Please reload the page.
     </div>
 
 </div>
